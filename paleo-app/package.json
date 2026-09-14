@@ -1,0 +1,27 @@
+{
+  "name": "com.paleo.fossil",
+  "displayName": "古生物化石背诵",
+  "version": "1.0.0",
+  "description": "古生物学标准化石知识点背诵工具（Cordova Android 混合应用）：背诵模式 + 填空测试 + 错题集 + 自主学习，纯前端、离线可用。",
+  "scripts": {
+    "build:android": "cordova build android",
+    "run:android": "cordova run android"
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-android",
+    "education",
+    "paleontology",
+    "flashcard"
+  ],
+  "author": "Apache Cordova Team",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "cordova-android": "^15.1.0"
+  },
+  "cordova": {
+    "platforms": [
+      "android"
+    ]
+  }
+}

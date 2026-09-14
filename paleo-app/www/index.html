@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#2d6a4f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="化石背诵">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>古生物化石背诵</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --primary: #2d6a4f;
+  --primary-light: #52b788;
+  --primary-dark: #1b4332;
+  --accent: #d4a017;
+  --bg: #f0ebe1;
+  --card: #ffffff;
+  --text: #1a1a2e;
+  --text-light: #6c757d;
+  --danger: #e63946;
+  --success: #2a9d8f;
+  --border: #dee2e6;
+  --radius: 14px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 4px 20px rgba(0,0,0,0.12);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ===== 页面容器 ===== */
+.page {
+  display: none;
+  min-height: 100vh;
+  padding-bottom: 20px;
+  animation: fadeIn 0.3s ease;
+}
+.page.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateX(10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ===== 顶部栏 ===== */
+.top-bar {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  color: white;
+  padding: 50px 20px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(45,106,79,0.3);
+}
+.top-bar h1 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.top-bar .subtitle {
+  font-size: 13px;
+  opacity: 0.8;
+  margin-top: 4px;
+}
+.top-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.back-btn {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.back-btn:active { background: rgba(255,255,255,0.35); }
+
+/* ===== 首页 ===== */
+.home-stats {
+  display: flex;
+  gap: 12px;
+  padding: 20px;
+}
+.stat-card {
+  flex: 1;
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.stat-card .num {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--primary);
+}
+.stat-card .label {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+
+.menu-list {
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.menu-item {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 22px 20px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.menu-item:active {
+  transform: scale(0.97);
+  box-shadow: var(--shadow-lg);
+}
+.menu-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  flex-shrink: 0;
+}
+.menu-icon.bg1 { background: linear-gradient(135deg, #52b788, #2d6a4f); }
+.menu-icon.bg2 { background: linear-gradient(135deg, #f4a261, #e76f51); }
+.menu-icon.bg3 { background: linear-gradient(135deg, #a8dadc, #457b9d); }
+.menu-info h3 { font-size: 17px; font-weight: 600; }
+.menu-info p { font-size: 13px; color: var(--text-light); margin-top: 3px; }
+
+/* ===== 分类选择 ===== */
+.section-title {
+  padding: 20px 20px 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+.category-list {
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.category-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.15s;
+}
+.category-card:active { transform: scale(0.97); }
+.category-card .cat-name { font-size: 16px; font-weight: 600; }
+.category-card .cat-count {
+  background: var(--primary-light);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 3px 12px;
+  border-radius: 20px;
+}
+
+/* ===== 背诵模式 ===== */
+.progress-bar {
+  height: 6px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 3px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.phase-tag {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 16px 20px 0;
+}
+.phase-tag.learn { background: #d4edda; color: #155724; }
+.phase-tag.test { background: #fff3cd; color: #856404; }
+
+.knowledge-card {
+  margin: 12px 20px;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.knowledge-card .card-header {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: white;
+  padding: 14px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.attr-row {
+  display: flex;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  align-items: flex-start;
+  gap: 12px;
+}
+.attr-row:last-child { border-bottom: none; }
+.attr-label {
+  font-size: 13px;
+  color: var(--text-light);
+  font-weight: 600;
+  white-space: nowrap;
+  min-width: 70px;
+}
+.attr-value {
+  font-size: 15px;
+  color: var(--text);
+  flex: 1;
+  line-height: 1.5;
+}
+.attr-value.latin { font-style: italic; color: var(--primary-dark); }
+.attr-value.empty-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.attr-input {
+  width: 100%;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.attr-input:focus { border-color: var(--primary-light); }
+.attr-input.correct { border-color: var(--success); background: #d4edda; }
+.attr-input.wrong { border-color: var(--danger); background: #f8d7da; }
+
+.answer-feedback {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  margin-top: 6px;
+  display: none;
+}
+.answer-feedback.show { display: block; }
+.answer-feedback.correct {
+  background: #d4edda;
+  color: #155724;
+}
+.answer-feedback.wrong {
+  background: #f8d7da;
+  color: #721c24;
+}
+.answer-feedback .correct-answer {
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.action-bar {
+  padding: 16px 20px;
+  display: flex;
+  gap: 12px;
+}
+.btn {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s, opacity 0.2s;
+  font-family: inherit;
+}
+.btn:active { transform: scale(0.96); }
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: white;
+}
+.btn-accent {
+  background: linear-gradient(135deg, #e8a317, #f4a261);
+  color: white;
+}
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+}
+.btn-danger {
+  background: var(--danger);
+  color: white;
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== 完成页面 ===== */
+.complete-card {
+  margin: 40px 20px;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 40px 24px;
+  text-align: center;
+}
+.complete-icon {
+  font-size: 56px;
+  margin-bottom: 16px;
+}
+.complete-card h2 {
+  font-size: 20px;
+  color: var(--primary-dark);
+  margin-bottom: 8px;
+}
+.complete-card p {
+  font-size: 14px;
+  color: var(--text-light);
+  line-height: 1.6;
+}
+.complete-stats {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin: 24px 0;
+}
+.complete-stat .num {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--primary);
+}
+.complete-stat .label {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+/* ===== 错题集 ===== */
+.wrong-item {
+  margin: 0 20px 12px;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.wrong-item-header {
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+.wrong-item-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+.wrong-item-cat {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+.wrong-item-actions {
+  display: flex;
+  gap: 8px;
+}
+.wrong-item-actions button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+.wrong-item-detail {
+  display: none;
+  padding: 0 18px 14px;
+  border-top: 1px solid var(--border);
+}
+.wrong-item-detail.show { display: block; }
+.wrong-item-detail .attr-row { padding: 8px 0; border-bottom: 1px dashed var(--border); }
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-light);
+}
+.empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state p { font-size: 15px; }
+
+/* ===== 浏览模式 ===== */
+.browse-item {
+  margin: 0 20px 12px;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  cursor: pointer;
+}
+.browse-item-header {
+  padding: 16px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.browse-item-name { font-size: 16px; font-weight: 600; }
+.browse-item-latin { font-size: 13px; font-style: italic; color: var(--primary); }
+.browse-item-detail {
+  display: none;
+  padding: 0 18px 14px;
+}
+.browse-item-detail.show { display: block; }
+.browse-item-detail .attr-row { padding: 8px 0; border-bottom: 1px dashed var(--border); }
+.browse-item-detail .attr-row:last-child { border-bottom: none; }
+
+.expand-arrow {
+  font-size: 14px;
+  color: var(--text-light);
+  transition: transform 0.2s;
+}
+.expand-arrow.open { transform: rotate(180deg); }
+
+/* ===== 提示 ===== */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--text);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 24px;
+  font-size: 14px;
+  z-index: 1000;
+  transition: transform 0.3s ease;
+  white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ===== 填空测试反馈 ===== */
+.test-result-banner {
+  margin: 12px 20px 0;
+  padding: 14px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  display: none;
+}
+.test-result-banner.show { display: block; }
+.test-result-banner.all-correct { background: #d4edda; color: #155724; }
+.test-result-banner.has-wrong { background: #f8d7da; color: #721c24; }
+</style>
+</head>
+<body>
+
+<!-- ===== 首页 ===== -->
+<div class="page active" id="page-home">
+  <div class="top-bar">
+    <h1>古生物化石背诵</h1>
+    <div class="subtitle">古生物学知识点记忆助手</div>
+  </div>
+  <div class="home-stats">
+    <div class="stat-card">
+      <div class="num" id="stat-total">0</div>
+      <div class="label">知识点总数</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" id="stat-wrong" style="color:var(--danger)">0</div>
+      <div class="label">错题数量</div>
+    </div>
+  </div>
+  <div class="menu-list">
+    <div class="menu-item" onclick="goPage('memorize')">
+      <div class="menu-icon bg1">背</div>
+      <div class="menu-info">
+        <h3>背诵模式</h3>
+        <p>分组学习，先展示后填空，巩固记忆</p>
+      </div>
+    </div>
+    <div class="menu-item" onclick="goPage('wrong')">
+      <div class="menu-icon bg2">错</div>
+      <div class="menu-info">
+        <h3>错题集</h3>
+        <p>复习答错的知识点，掌握后可删除</p>
+      </div>
+    </div>
+    <div class="menu-item" onclick="goPage('browse')">
+      <div class="menu-icon bg3">览</div>
+      <div class="menu-info">
+        <h3>自主学习</h3>
+        <p>按分类浏览所有知识点，自由学习</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 背诵模式 ===== -->
+<div class="page" id="page-memorize">
+  <div class="top-bar">
+    <div class="top-bar-row">
+      <button class="back-btn" onclick="backToHome()">←</button>
+      <div style="flex:1">
+        <h1 id="memorize-title">背诵模式</h1>
+        <div class="subtitle" id="memorize-subtitle"></div>
+      </div>
+    </div>
+    <div class="progress-bar" id="memorize-progress-bar" style="display:none">
+      <div class="progress-fill" id="memorize-progress-fill" style="width:0%"></div>
+    </div>
+  </div>
+  <div id="memorize-content"></div>
+</div>
+
+<!-- ===== 错题集 ===== -->
+<div class="page" id="page-wrong">
+  <div class="top-bar">
+    <div class="top-bar-row">
+      <button class="back-btn" onclick="backToHome()">←</button>
+      <div style="flex:1">
+        <h1>错题集</h1>
+        <div class="subtitle" id="wrong-subtitle">点击知识点可展开详情</div>
+      </div>
+    </div>
+  </div>
+  <div id="wrong-content"></div>
+</div>
+
+<!-- ===== 自主学习 ===== -->
+<div class="page" id="page-browse">
+  <div class="top-bar">
+    <div class="top-bar-row">
+      <button class="back-btn" onclick="backToHome()">←</button>
+      <div style="flex:1">
+        <h1 id="browse-title">自主学习</h1>
+        <div class="subtitle" id="browse-subtitle"></div>
+      </div>
+    </div>
+  </div>
+  <div id="browse-content"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ==================== 知识点数据 ====================
+// 数据来源：项目根目录 data/ 文件夹下的 CSV 表格（详见 README.md）
+
+const CATEGORIES = [
+  {
+    name: "三叶虫化石",
+    source: "data/三叶虫化石.csv",
+    items: [
+      { name: "莱德利基虫", latin: "Redlichia", period: "ϵ1 早寒武", notes: "华南下寒武统标志" },
+      { name: "古油栉虫", latin: "Palaeolenus", period: "ϵ1 早寒武", notes: "早寒武共生组合" },
+      { name: "球接子", latin: "Agnostus", period: "ϵ2 中寒武", notes: "全球广布浮游型三叶虫" },
+      { name: "叉尾虫", latin: "Dorypyge", period: "ϵ2 中寒武", notes: "中寒武底界常见分子" },
+      { name: "华雷氏虫", latin: "Bailiella", period: "ϵ2 中寒武", notes: "华北中寒武标准化石" },
+      { name: "山东盾壳虫", latin: "Shantungaspis", period: "ϵ21 中寒武早期", notes: "中寒武早期划分标志" },
+      { name: "德氏虫", latin: "Damesella", period: "ϵ23 中寒武晚期", notes: "中寒武顶界化石" },
+      { name: "济南虫", latin: "Tsinania", period: "ϵ3 晚寒武", notes: "上寒武统上部分子" },
+      { name: "蝴蝶虫", latin: "Blackwelderia", period: "ϵ31 晚寒武早期", notes: "晚寒武早期标志性化石" },
+      { name: "蝙蝠虫", latin: "Drepanura", period: "ϵ31 晚寒武早期", notes: "蝴蝶虫共生，晚寒武典型" },
+      { name: "古等称虫", latin: "Eoisotelus", period: "O1 早奥陶", notes: "下奥陶统底界化石" },
+      { name: "南京三瘤虫", latin: "Nankinolithus", period: "O3 晚奥陶", notes: "江南区上奥陶统标志" },
+      { name: "小达尔曼虫", latin: "Dalmanitina", period: "O1−S1 早奥陶-早志留", notes: "奥陶/志留系界线附近化石" },
+      { name: "王冠虫", latin: "Coronocephalus", period: "S2 中志留", notes: "中志留统标准化石" }
+    ]
+  },
+  {
+    name: "有节类植物",
+    source: "data/有节类植物.csv",
+    items: [
+      { name: "芦木（茎化石）", latin: "Calamites", period: "C2−P", notes: "石炭纪沼泽成煤植物" },
+      { name: "轮叶", latin: "Annularia", period: "C2−P", notes: "芦木的叶片化石" },
+      { name: "瓣轮叶", latin: "Lobatannularia", period: "P 二叠纪", notes: "二叠纪华夏植物群标志" },
+      { name: "楔叶", latin: "Sphenophyllum", period: "D3−T1", notes: "跨泥盆-早三叠世" }
+    ]
+  },
+  {
+    name: "鳞木类植物",
+    source: "data/鳞木类植物.csv",
+    items: [
+      { name: "鳞木", latin: "Lepidodendron", period: "C−P 石炭-二叠", notes: "晚古生代成煤核心植物" },
+      { name: "薄皮木", latin: "Leptophloeum", period: "D3 晚泥盆世", notes: "泥盆纪陆生植物代表" }
+    ]
+  },
+  {
+    name: "真蕨类植物",
+    source: "data/真蕨类植物.csv",
+    items: [
+      { name: "栉羊齿", latin: "Pecopteris", period: "C−T 石炭-三叠", notes: "晚古生代-早中生代广布" },
+      { name: "拟丹尼蕨", latin: "Danaeopsis", period: "T3 晚三叠世", notes: "延长植物群核心化石" },
+      { name: "贝尔瑙蕨", latin: "Bernoullia", period: "T3 晚三叠世", notes: "与拟丹尼蕨共生" },
+      { name: "格子蕨", latin: "Clathropteris", period: "T3−J2", notes: "南方晚三叠-中侏罗标志" },
+      { name: "网叶蕨", latin: "Dictyophyllum", period: "T3−J1", notes: "网叶蕨-格子蕨植物群" },
+      { name: "锥叶蕨", latin: "Coniopteris", period: "J−K1 侏罗-早白垩", notes: "侏罗纪最常见蕨类" },
+      { name: "枝脉蕨", latin: "Cladophlebis", period: "P−K 二叠-白垩", notes: "时代跨度极广" }
+    ]
+  },
+  {
+    name: "种子蕨与银杏类",
+    source: "data/种子蕨与银杏类.csv",
+    items: [
+      { name: "大羽羊齿", latin: "Gigantopteris", period: "P3 晚二叠世", notes: "华夏植物群标志性化石" },
+      { name: "脉羊齿", latin: "Neuropteris", period: "C−P 石炭-二叠", notes: "石炭纪种子蕨代表" },
+      { name: "侧羽叶", latin: "Pterophyllum", period: "C2−K1", notes: "古生代-早白垩苏铁类" },
+      { name: "拜拉（银杏类）", latin: "Baiera", period: "T2−K3", notes: "中生代银杏化石" },
+      { name: "苏铁杉", latin: "Podozamites", period: "T3−K1", notes: "三叠-早白垩松柏类" },
+      { name: "尼尔桑", latin: "Nilssonia", period: "T3−K1", notes: "中生代苏铁标准化石" }
+    ]
+  }
+];
+
+// 所有知识点汇总
+const ALL_ITEMS = [];
+CATEGORIES.forEach(cat => {
+  cat.items.forEach(item => {
+    ALL_ITEMS.push({ ...item, category: cat.name });
+  });
+});
+
+// ==================== 状态管理 ====================
+let currentPage = 'home';
+let memorizeState = null; // { categoryIndex, groups, groupIndex, phase, itemIndex, testConfig }
+let wrongSet = {};        // 错题集 { key: { ...item, category } }
+
+// 从 localStorage 加载错题集
+function loadWrongSet() {
+  try {
+    const saved = localStorage.getItem('paleo_wrong_set');
+    if (saved) wrongSet = JSON.parse(saved);
+  } catch(e) { wrongSet = {}; }
+}
+function saveWrongSet() {
+  localStorage.setItem('paleo_wrong_set', JSON.stringify(wrongSet));
+}
+function getItemKey(item) {
+  return item.category + '|' + item.name;
+}
+
+// ==================== 工具函数 ====================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function goPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + pageId).classList.add('active');
+  currentPage = pageId;
+  if (pageId === 'memorize') initMemorize();
+  if (pageId === 'wrong') renderWrongSet();
+  if (pageId === 'browse') initBrowse();
+  window.scrollTo(0, 0);
+}
+
+function backToHome() {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-home').classList.add('active');
+  currentPage = 'home';
+  updateHomeStats();
+  window.scrollTo(0, 0);
+}
+
+function updateHomeStats() {
+  document.getElementById('stat-total').textContent = ALL_ITEMS.length;
+  document.getElementById('stat-wrong').textContent = Object.keys(wrongSet).length;
+}
+
+// 归一化字符串用于答案比对
+function normalizeStr(s) {
+  return s.trim().toLowerCase()
+    .replace(/[\u200B\u200C\u200D\uFEFF]/g, '') // 零宽字符
+    .replace(/\s+/g, '')
+    .replace(/（/g, '(').replace(/）/g, ')');
+}
+
+// 检查答案
+function checkAnswer(userAnswer, correctAnswer, field) {
+  const u = normalizeStr(userAnswer);
+  const c = normalizeStr(correctAnswer);
+  if (!u) return false;
+  if (field === 'period') {
+    // 时期：宽松匹配，任一方包含对方即可
+    return u === c || c.includes(u) || u.includes(c);
+  }
+  if (field === 'latin') {
+    // 拉丁学名：忽略大小写精确匹配
+    return u === c;
+  }
+  // 中文名称：精确匹配（忽略括号差异）
+  return u === c;
+}
+
+// 打乱数组
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// 将数组分成每组 size 个
+function chunk(arr, size) {
+  const groups = [];
+  for (let i = 0; i < arr.length; i += size) {
+    groups.push(arr.slice(i, i + size));
+  }
+  return groups;
+}
+
+// ==================== 背诵模式 ====================
+function initMemorize() {
+  memorizeState = null;
+  renderMemorizeCategorySelect();
+}
+
+function renderMemorizeCategorySelect() {
+  document.getElementById('memorize-title').textContent = '背诵模式';
+  document.getElementById('memorize-subtitle').textContent = '选择一个分类开始背诵';
+  document.getElementById('memorize-progress-bar').style.display = 'none';
+
+  let html = '<div class="section-title">选择分类</div><div class="category-list">';
+  CATEGORIES.forEach((cat, i) => {
+    html += `<div class="category-card" onclick="startMemorize(${i})">
+      <div class="cat-name">${cat.name}</div>
+      <div class="cat-count">${cat.items.length} 个知识点</div>
+    </div>`;
+  });
+  // 全部
+  html += `<div class="category-card" onclick="startMemorize(-1)">
+    <div class="cat-name">全部知识点</div>
+    <div class="cat-count">${ALL_ITEMS.length} 个知识点</div>
+  </div>`;
+  html += '</div>';
+
+  // 错题集复习入口
+  const wrongCount = Object.keys(wrongSet).length;
+  if (wrongCount > 0) {
+    html += `<div class="section-title">错题复习</div>
+    <div class="category-list">
+      <div class="category-card" onclick="startWrongReview()">
+        <div class="cat-name">错题集复习</div>
+        <div class="cat-count">${wrongCount} 个错题</div>
+      </div>
+    </div>`;
+  }
+
+  document.getElementById('memorize-content').innerHTML = html;
+}
+
+function startMemorize(categoryIndex) {
+  let items;
+  let categoryName;
+  if (categoryIndex === -1) {
+    items = shuffle(ALL_ITEMS);
+    categoryName = '全部知识点';
+  } else {
+    const cat = CATEGORIES[categoryIndex];
+    items = shuffle(cat.items.map(it => ({ ...it, category: cat.name })));
+    categoryName = cat.name;
+  }
+
+  const groups = chunk(items, 5);
+  memorizeState = {
+    categoryName,
+    groups,
+    groupIndex: 0,
+    phase: 'learn', // 'learn' | 'test'
+    itemIndex: 0,
+    totalItems: items.length
+  };
+  renderMemorizeLearn();
+}
+
+function startWrongReview() {
+  const wrongItems = Object.values(wrongSet);
+  if (wrongItems.length === 0) {
+    showToast('错题集为空');
+    return;
+  }
+  const items = shuffle(wrongItems);
+  const groups = chunk(items, 5);
+  memorizeState = {
+    categoryName: '错题集复习',
+    groups,
+    groupIndex: 0,
+    phase: 'learn',
+    itemIndex: 0,
+    totalItems: items.length,
+    isWrongReview: true
+  };
+  renderMemorizeLearn();
+}
+
+function updateMemorizeProgress() {
+  if (!memorizeState) return;
+  const s = memorizeState;
+  const totalSteps = s.groups.length * 2; // 每组有学习和测试两轮
+  const currentStep = s.groupIndex * 2 + (s.phase === 'learn' ? 0 : 1);
+  const pct = ((currentStep) / totalSteps) * 100;
+  document.getElementById('memorize-progress-bar').style.display = 'block';
+  document.getElementById('memorize-progress-fill').style.width = pct + '%';
+
+  const currentGroup = s.groups[s.groupIndex];
+  document.getElementById('memorize-title').textContent = s.categoryName;
+  document.getElementById('memorize-subtitle').textContent =
+    `第 ${s.groupIndex + 1}/${s.groups.length} 组 · ` +
+    (s.phase === 'learn' ? '学习阶段' : '测试阶段') +
+    ` · 第 ${s.itemIndex + 1}/${currentGroup.length} 题`;
+}
+
+// ---- 学习阶段：展示全部属性 ----
+function renderMemorizeLearn() {
+  const s = memorizeState;
+  const group = s.groups[s.groupIndex];
+  const item = group[s.itemIndex];
+  updateMemorizeProgress();
+
+  let html = `<div class="phase-tag learn">📖 学习阶段 — 请记住以下知识点</div>`;
+  html += renderKnowledgeCardFull(item);
+  html += `<div class="action-bar">
+    <button class="btn btn-primary" onclick="nextLearnItem()">我记住了，下一个 →</button>
+  </div>`;
+  document.getElementById('memorize-content').innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+function renderKnowledgeCardFull(item) {
+  return `<div class="knowledge-card">
+    <div class="card-header">
+      <span>大类：${item.category}</span>
+    </div>
+    <div class="attr-row">
+      <div class="attr-label">中文名称</div>
+      <div class="attr-value">${item.name}</div>
+    </div>
+    <div class="attr-row">
+      <div class="attr-label">拉丁学名</div>
+      <div class="attr-value latin">${item.latin}</div>
+    </div>
+    <div class="attr-row">
+      <div class="attr-label">时期</div>
+      <div class="attr-value">${item.period}</div>
+    </div>
+    <div class="attr-row">
+      <div class="attr-label">考点说明</div>
+      <div class="attr-value">${item.notes}</div>
+    </div>
+  </div>`;
+}
+
+function nextLearnItem() {
+  const s = memorizeState;
+  const group = s.groups[s.groupIndex];
+  s.itemIndex++;
+  if (s.itemIndex >= group.length) {
+    // 本组学习完毕，进入测试阶段
+    s.itemIndex = 0;
+    s.phase = 'test';
+    showToast('学习阶段完成！接下来进入填空测试');
+    renderMemorizeTest();
+  } else {
+    renderMemorizeLearn();
+  }
+}
+
+// ---- 测试阶段：填空 ----
+function renderMemorizeTest() {
+  const s = memorizeState;
+  const group = s.groups[s.groupIndex];
+  const item = group[s.itemIndex];
+  updateMemorizeProgress();
+
+  // 随机选择2个属性让用户填写（从 中文名称、拉丁学名、时期 中选）
+  const fields = [
+    { key: 'name', label: '中文名称' },
+    { key: 'latin', label: '拉丁学名' },
+    { key: 'period', label: '时期' }
+  ];
+  const shuffledFields = shuffle(fields);
+  const hideFields = shuffledFields.slice(0, 2); // 隐藏2个
+  const showField = shuffledFields[2];           // 显示1个作为提示
+
+  s.currentTest = { item, hideFields, showField, submitted: false };
+
+  let html = `<div class="phase-tag test">✏️ 测试阶段 — 请填写空缺的属性</div>`;
+  html += `<div class="knowledge-card">
+    <div class="card-header">
+      <span>大类：${item.category}</span>
+    </div>`;
+
+  // 显示的提示属性
+  html += `<div class="attr-row">
+    <div class="attr-label">${showField.label}</div>
+    <div class="attr-value ${showField.key === 'latin' ? 'latin' : ''}">${item[showField.key]}</div>
+  </div>`;
+
+  // 考点说明始终显示
+  html += `<div class="attr-row">
+    <div class="attr-label">考点说明</div>
+    <div class="attr-value">${item.notes}</div>
+  </div>`;
+
+  // 需要填写的属性
+  hideFields.forEach((f, i) => {
+    html += `<div class="attr-row">
+      <div class="attr-label">${f.label}</div>
+      <div class="attr-value empty-slot">
+        <input type="text" class="attr-input" id="test-input-${i}" placeholder="请填写${f.label}" autocomplete="off">
+        <div class="answer-feedback" id="test-feedback-${i}"></div>
+      </div>
+    </div>`;
+  });
+
+  html += `</div>`;
+
+  // 结果横幅
+  html += `<div class="test-result-banner" id="test-banner"></div>`;
+
+  html += `<div class="action-bar">
+    <button class="btn btn-accent" id="submit-btn" onclick="submitTest()">提交答案</button>
+    <button class="btn btn-primary" id="next-btn" style="display:none" onclick="nextTestItem()">下一个 →</button>
+  </div>`;
+
+  document.getElementById('memorize-content').innerHTML = html;
+
+  // 自动聚焦第一个输入框
+  setTimeout(() => document.getElementById('test-input-0').focus(), 100);
+}
+
+function submitTest() {
+  const s = memorizeState;
+  const { item, hideFields } = s.currentTest;
+  let allCorrect = true;
+  let hasWrong = false;
+
+  hideFields.forEach((f, i) => {
+    const input = document.getElementById('test-input-' + i);
+    const feedback = document.getElementById('test-feedback-' + i);
+    const userAns = input.value;
+    const isCorrect = checkAnswer(userAns, item[f.key], f.key);
+
+    input.disabled = true;
+    feedback.classList.add('show');
+
+    if (isCorrect) {
+      input.classList.add('correct');
+      feedback.classList.add('correct');
+      feedback.innerHTML = '✓ 回答正确！';
+    } else {
+      input.classList.add('wrong');
+      feedback.classList.add('wrong');
+      feedback.innerHTML = `✗ 回答错误<br><span class="correct-answer">正确答案：${item[f.key]}</span>`;
+      allCorrect = false;
+      hasWrong = true;
+      // 添加到错题集
+      const key = getItemKey(item);
+      wrongSet[key] = { ...item };
+      saveWrongSet();
+    }
+  });
+
+  s.currentTest.submitted = true;
+
+  // 显示结果横幅
+  const banner = document.getElementById('test-banner');
+  banner.classList.add('show');
+  if (allCorrect) {
+    banner.classList.add('all-correct');
+    banner.classList.remove('has-wrong');
+    banner.textContent = '🎉 全部正确！';
+  } else {
+    banner.classList.add('has-wrong');
+    banner.classList.remove('all-correct');
+    banner.textContent = '⚠ 有答错的项，已自动加入错题集';
+  }
+
+  document.getElementById('submit-btn').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextTestItem() {
+  const s = memorizeState;
+  const group = s.groups[s.groupIndex];
+  s.itemIndex++;
+  if (s.itemIndex >= group.length) {
+    // 本组测试完毕
+    s.groupIndex++;
+    if (s.groupIndex >= s.groups.length) {
+      // 全部完成
+      renderMemorizeComplete();
+    } else {
+      // 下一组学习阶段
+      s.itemIndex = 0;
+      s.phase = 'learn';
+      showToast('进入下一组学习！');
+      renderMemorizeLearn();
+    }
+  } else {
+    renderMemorizeTest();
+  }
+}
+
+function renderMemorizeComplete() {
+  const s = memorizeState;
+  const total = s.totalItems;
+  const wrongCount = Object.keys(wrongSet).length;
+
+  document.getElementById('memorize-title').textContent = '背诵完成';
+  document.getElementById('memorize-subtitle').textContent = '';
+  document.getElementById('memorize-progress-bar').style.display = 'none';
+
+  let html = `<div class="complete-card">
+    <div class="complete-icon">🎉</div>
+    <h2>恭喜完成全部背诵！</h2>
+    <p>你已完成「${s.categoryName}」全部 ${total} 个知识点的学习与测试</p>
+    <div class="complete-stats">
+      <div class="complete-stat">
+        <div class="num">${total}</div>
+        <div class="label">学习总数</div>
+      </div>
+      <div class="complete-stat">
+        <div class="num" style="color:var(--danger)">${wrongCount}</div>
+        <div class="label">当前错题</div>
+      </div>
+    </div>
+    <div class="action-bar" style="padding:0">
+      <button class="btn btn-primary" onclick="backToHome()">返回首页</button>
+      ${wrongCount > 0 ? '<button class="btn btn-accent" onclick="initMemorize();renderMemorizeCategorySelect();goPage(\'memorize\')">复习错题</button>' : ''}
+    </div>
+  </div>`;
+  document.getElementById('memorize-content').innerHTML = html;
+  updateHomeStats();
+}
+
+// ==================== 错题集 ====================
+function renderWrongSet() {
+  const wrongItems = Object.values(wrongSet);
+  document.getElementById('wrong-subtitle').textContent =
+    wrongItems.length > 0 ? `共 ${wrongItems.length} 个错题，点击展开详情` : '暂无错题';
+
+  if (wrongItems.length === 0) {
+    document.getElementById('wrong-content').innerHTML = `
+      <div class="empty-state">
+        <div class="icon">🎉</div>
+        <p>错题集为空！</p>
+        <p style="font-size:13px;margin-top:6px">去背诵模式中继续学习吧</p>
+      </div>`;
+    return;
+  }
+
+  let html = '';
+  wrongItems.forEach(item => {
+    const key = getItemKey(item);
+    html += `<div class="wrong-item">
+      <div class="wrong-item-header" onclick="toggleWrongDetail('${key}')">
+        <div>
+          <div class="wrong-item-name">${item.name}</div>
+          <div class="wrong-item-cat">${item.category}</div>
+        </div>
+        <div class="wrong-item-actions" onclick="event.stopPropagation()">
+          <button class="btn-outline" style="padding:6px 12px;border:1px solid var(--primary);background:white;color:var(--primary)" onclick="reviewWrongItem('${key}')">复习</button>
+          <button class="btn-danger" style="padding:6px 12px" onclick="deleteWrongItem('${key}')">掌握</button>
+        </div>
+      </div>
+      <div class="wrong-item-detail" id="wrong-detail-${key}">
+        <div class="attr-row">
+          <div class="attr-label">中文名称</div>
+          <div class="attr-value">${item.name}</div>
+        </div>
+        <div class="attr-row">
+          <div class="attr-label">拉丁学名</div>
+          <div class="attr-value latin">${item.latin}</div>
+        </div>
+        <div class="attr-row">
+          <div class="attr-label">时期</div>
+          <div class="attr-value">${item.period}</div>
+        </div>
+        <div class="attr-row">
+          <div class="attr-label">考点说明</div>
+          <div class="attr-value">${item.notes}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('wrong-content').innerHTML = html;
+}
+
+function toggleWrongDetail(key) {
+  const el = document.getElementById('wrong-detail-' + key);
+  el.classList.toggle('show');
+}
+
+function deleteWrongItem(key) {
+  delete wrongSet[key];
+  saveWrongSet();
+  renderWrongSet();
+  updateHomeStats();
+  showToast('已从错题集移除');
+}
+
+function reviewWrongItem(key) {
+  const item = wrongSet[key];
+  if (!item) return;
+  // 单个错题复习：填空测试
+  const items = [item];
+  memorizeState = {
+    categoryName: '错题复习：' + item.name,
+    groups: [items],
+    groupIndex: 0,
+    phase: 'learn',
+    itemIndex: 0,
+    totalItems: 1,
+    isWrongReview: true
+  };
+  // 直接进入学习阶段复习
+  renderMemorizeLearn();
+  goPage('memorize');
+}
+
+// ==================== 自主学习 ====================
+let browseState = { selectedCategory: null };
+
+function initBrowse() {
+  browseState.selectedCategory = null;
+  renderBrowseCategorySelect();
+}
+
+function renderBrowseCategorySelect() {
+  document.getElementById('browse-title').textContent = '自主学习';
+  document.getElementById('browse-subtitle').textContent = '选择分类浏览知识点';
+
+  let html = '<div class="section-title">选择分类</div><div class="category-list">';
+  CATEGORIES.forEach((cat, i) => {
+    html += `<div class="category-card" onclick="selectBrowseCategory(${i})">
+      <div class="cat-name">${cat.name}</div>
+      <div class="cat-count">${cat.items.length} 个</div>
+    </div>`;
+  });
+  // 全部
+  html += `<div class="category-card" onclick="selectBrowseCategory(-1)">
+    <div class="cat-name">全部知识点</div>
+    <div class="cat-count">${ALL_ITEMS.length} 个</div>
+  </div>`;
+  html += '</div>';
+  document.getElementById('browse-content').innerHTML = html;
+}
+
+function selectBrowseCategory(idx) {
+  browseState.selectedCategory = idx;
+  let items, catName;
+  if (idx === -1) {
+    items = ALL_ITEMS;
+    catName = '全部知识点';
+  } else {
+    const cat = CATEGORIES[idx];
+    items = cat.items.map(it => ({ ...it, category: cat.name }));
+    catName = cat.name;
+  }
+
+  document.getElementById('browse-title').textContent = catName;
+  document.getElementById('browse-subtitle').textContent = `共 ${items.length} 个知识点，点击展开详情`;
+
+  let html = '';
+  items.forEach((item, i) => {
+    html += `<div class="browse-item">
+      <div class="browse-item-header" onclick="toggleBrowseDetail(${i})">
+        <div>
+          <div class="browse-item-name">${item.name}</div>
+          <div class="browse-item-latin">${item.latin}</div>
+        </div>
+        <div class="expand-arrow" id="browse-arrow-${i}">▼</div>
+      </div>
+      <div class="browse-item-detail" id="browse-detail-${i}">
+        <div class="attr-row">
+          <div class="attr-label">大类</div>
+          <div class="attr-value">${item.category}</div>
+        </div>
+        <div class="attr-row">
+          <div class="attr-label">中文名称</div>
+          <div class="attr-value">${item.name}</div>
+        </div>
+        <div class="attr-row">
+          <div class="attr-label">拉丁学名</div>
+          <div class="attr-value latin">${item.latin}</div>
+        </div>
+        <div class="attr-row">
+          <div class="attr-label">时期</div>
+          <div class="attr-value">${item.period}</div>
+        </div>
+        <div class="attr-row">
+          <div class="attr-label">考点说明</div>
+          <div class="attr-value">${item.notes}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('browse-content').innerHTML = html;
+}
+
+function toggleBrowseDetail(i) {
+  const detail = document.getElementById('browse-detail-' + i);
+  const arrow = document.getElementById('browse-arrow-' + i);
+  detail.classList.toggle('show');
+  arrow.classList.toggle('open');
+}
+
+// ==================== Service Worker 注册 ====================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
+
+// ==================== 初始化 ====================
+loadWrongSet();
+updateHomeStats();
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "name": "古生物化石背诵",
+  "short_name": "化石背诵",
+  "description": "古生物学知识点记忆助手：背诵模式、填空测试、错题集与自主学习",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f0ebe1",
+  "theme_color": "#2d6a4f",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
